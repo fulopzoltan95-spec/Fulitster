@@ -16,7 +16,7 @@ class HitsterClassHandle {
     fun getSpotyURL(context: Context,hitsterUrl:String):Songinfo
     {
         val parsed = parseHitsterUrl(hitsterUrl)
-        var songinfo = Songinfo("","")
+        var songinfo = Songinfo("","",)
         if (parsed != null) {
             songinfo = getArtistAndTrack(context, parsed.lang, parsed.id)
             if (songinfo != null) {
@@ -30,7 +30,7 @@ class HitsterClassHandle {
         return songinfo
     }
 
-    data class HitsterUrlResult(val lang: String, val id: String)
+    data class HitsterUrlResult(val lang: String, val id: String )
 
     fun parseHitsterUrl(url: String): HitsterUrlResult? {
         val regex = Regex("^(?:http://|https://)?www\\.hitstergame\\.com/(.+?)/(\\d+)$")
@@ -66,7 +66,7 @@ class HitsterClassHandle {
     }
 
 
-    fun getArtistAndTrack(context: android.content.Context, lang: String, cardId: String):Songinfo
+   /* fun getArtistAndTrack(context: android.content.Context, lang: String, cardId: String):Songinfo
     {
         val fileName = "hitster-$lang.csv"
         return try {
@@ -84,7 +84,30 @@ class HitsterClassHandle {
             e.printStackTrace()
             return  Songinfo("","")
         }
-    }
+    }*/
+   fun getArtistAndTrack(context: Context, lang: String, cardId: String): Songinfo {
+       val fileName = "hitster-$lang.csv"
+       return try {
+           context.assets.open(fileName).bufferedReader(Charsets.UTF_8).useLines { lines ->
+               for (line in lines.drop(1)) {
+                   val parts = line.split(',')
+                   val id = parts.getOrNull(0)?.removePrefix("\uFEFF")?.trim()
+                   if (parts.size >= 4 && id == cardId) {
+                       return@useLines Songinfo(
+                           parts[1].trim(),
+                           parts[2].trim()
+
+                       )
+                   }
+               }
+               // ha nem talált:
+               Songinfo("", "")
+           }
+       } catch (e: Exception) {
+           e.printStackTrace()
+           Songinfo("", "")
+       }
+   }
 
     fun loadYouTubeUrlFromCsv(context: android.content.Context, lang: String, cardId: String): String? {
         val fileName = "hitster-$lang.csv"

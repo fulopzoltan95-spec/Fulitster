@@ -34,8 +34,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import com.example.myapplicationasd.databinding.ActivityMainBinding
-import android.view.MotionEvent
-import android.view.GestureDetector
+
 
 enum class PlayerState { STOPPED, PLAYING, PAUSED, FINISHED }
 
@@ -57,8 +56,8 @@ class MainActivity : AppCompatActivity() {
     private var sessionId: Long = 0L
 
     companion object {
-        private const val clientId  = "da0095c04df945a2874dd9e91bc80fc9"
-        private const val redirectUri  = "hitsterclone://callback"
+        private const val clientId = "da0095c04df945a2874dd9e91bc80fc9"
+        private const val redirectUri = "hitsterclone://callback"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,8 +84,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.root.setOnTouchListener(object : OnSwipeTouchListener(this) {
-            override fun onSwipeRight() { resetAll() }
-            override fun onSwipeLeft() { resetAll() }
+            override fun onSwipeRight() {
+                resetAll()
+            }
+
+            override fun onSwipeLeft() {
+                resetAll()
+            }
         })
 
 
@@ -235,7 +239,8 @@ class MainActivity : AppCompatActivity() {
     // QR + Camera
     private fun checkCameraPermissionAndStart() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1001)
         } else {
             startCamera()
@@ -259,7 +264,8 @@ class MainActivity : AppCompatActivity() {
             analyzer.setAnalyzer(ContextCompat.getMainExecutor(this)) { imageProxy ->
                 val mediaImage = imageProxy.image
                 if (mediaImage != null) {
-                    val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+                    val image =
+                        InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
                     val scanner = BarcodeScanning.getClient()
                     scanner.process(image)
                         .addOnSuccessListener { barcodes ->
@@ -269,31 +275,41 @@ class MainActivity : AppCompatActivity() {
                                     lastScanned = value
                                     val hitsterClassHandle = HitsterClassHandle()
                                     if (hitsterClassHandle.isHitsterLink(value)) {
-                                        val songinfo: Songinfo = hitsterClassHandle.getSpotyURL(this, value)
-                                        searchTrackOnSpotyWithArtistAndSong(songinfo.song, songinfo.artist) { uri ->
+                                        val songinfo: Songinfo =
+                                            hitsterClassHandle.getSpotyURL(this, value)
+                                        searchTrackOnSpotyWithArtistAndSong(
+                                            songinfo.song,
+                                            songinfo.artist
+                                        ) { uri ->
                                             if (uri != null) {
                                                 binding.previewView.visibility = View.GONE
                                                 startMusicAndAnimation(uri)
                                             } else {
-                                                Toast.makeText(this, "Zeneszám nem található", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    this,
+                                                    "Zeneszám nem található",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                             stopcamera()
                                         }
                                     } else {
-                                        if(isSpotifyUrl(value)) {
+                                        if (isSpotifyUrl(value)) {
                                             binding.previewView.visibility = View.GONE
                                             startMusicAndAnimation(spotifyUrlToUri(value))
                                             stopcamera()
-                                        }
-                                        else if(isValidSpotifyUri(value)) {
+                                        } else if (isValidSpotifyUri(value)) {
                                             binding.previewView.visibility = View.GONE
                                             startMusicAndAnimation(value)
                                             stopcamera()
-                                        }
-                                        else{
+                                        } else {
                                             stopcamera()
                                             resetAll()
-                                            Toast.makeText(this,"Nem megfelelő formátum",Toast.LENGTH_SHORT)
+                                            Toast.makeText(
+                                                this,
+                                                "Nem megfelelő formátum",
+                                                Toast.LENGTH_SHORT
+                                            )
                                         }
                                     }
                                 }
@@ -312,7 +328,12 @@ class MainActivity : AppCompatActivity() {
             }
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA, preview, analyzer)
+                cameraProvider.bindToLifecycle(
+                    this,
+                    CameraSelector.DEFAULT_BACK_CAMERA,
+                    preview,
+                    analyzer
+                )
             } catch (e: Exception) {
                 Log.e("Camera", "Hiba a kamera indításkor", e)
             }
@@ -332,55 +353,78 @@ class MainActivity : AppCompatActivity() {
         val regex = Regex("^spotify:(track|album|playlist|artist):[a-zA-Z0-9]+$")
         return regex.matches(uri)
     }
-   private  fun isSpotifyUrl(url: String): Boolean {
-        val regex = Regex("^https?://open\\.spotify\\.com/(track|album|playlist|artist)/[a-zA-Z0-9]+")
+
+    private fun isSpotifyUrl(url: String): Boolean {
+        val regex =
+            Regex("^https?://open\\.spotify\\.com/(track|album|playlist|artist)/[a-zA-Z0-9]+")
         return regex.containsMatchIn(url)
     }
+
     fun spotifyUrlToUri(url: String): String {
         // Először ellenőrzi, hogy Spotify URL-e
-        val regex = Regex("^https?://open\\.spotify\\.com/(track|album|playlist|artist)/([a-zA-Z0-9]+)")
+        val regex =
+            Regex("^https?://open\\.spotify\\.com/(track|album|playlist|artist)/([a-zA-Z0-9]+)")
         val match = regex.find(url)
         return if (match != null) {
             val type = match.groupValues[1]
             val id = match.groupValues[2]
             "spotify:$type:$id"
         } else {
-            Toast.makeText(this,"Nem megfelelő formátum",Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Nem megfelelő formátum", Toast.LENGTH_SHORT)
             resetAll()
             ""
         }
     }
-    private fun searchTrackOnSpotyWithArtistAndSong(title: String, artist: String, callback: (String?) -> Unit) {
-        val token = accessToken ?: return callback(null)
-        val query = "track:\"$title\" artist:\"$artist\""
-        val url = "https://api.spotify.com/v1/search?q=${Uri.encode(query)}&type=track&limit=1"
+
+    private fun searchTrackOnSpotyWithArtistAndSong(
+        title: String,
+        artist: String,
+        callback: (String?) -> Unit
+    ) {
+        val token = accessToken
+        if (token.isNullOrEmpty()) {
+            callback(null); return
+        }
+
         Thread {
+            val client = OkHttpClient()
             try {
-                val client = OkHttpClient()
-                val request = Request.Builder()
-                    .url(url)
-                    .addHeader("Authorization", "Bearer $token")
-                    .build()
-                val response = client.newCall(request).execute()
-                val json = response.body?.string()
-                if (json != null) {
-                    val obj = JSONObject(json)
-                    val tracks = obj.getJSONObject("tracks").getJSONArray("items")
-                    if (tracks.length() > 0) {
-                        val track = tracks.getJSONObject(0)
-                        val uri = track.getString("uri")
-                        runOnUiThread { callback(uri) }
-                    } else {
-                        runOnUiThread { callback(null) }
-                    }
-                } else {
-                    runOnUiThread { callback(null) }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+                // 1) első próbálkozás: track:"title" artist:"artist"
+                val uri = querySpotifyForUri(client, token, title, artist)
+                // 2) ha nincs találat: swap → track:"artist" artist:"title"
+                val result = uri ?: querySpotifyForUri(client, token, artist, title)
+                runOnUiThread { callback(result) }
+            } catch (t: Throwable) {
+                t.printStackTrace()
                 runOnUiThread { callback(null) }
             }
         }.start()
+    }
+
+    private fun querySpotifyForUri(
+        client: OkHttpClient,
+        token: String,
+        trackTitle: String,
+        artistName: String
+    ): String? {
+        val safeTitle = trackTitle.replace("\"", "\\\"")
+        val safeArtist = artistName.replace("\"", "\\\"")
+        val query = "track:\"$safeTitle\" artist:\"$safeArtist\""
+        val url = "https://api.spotify.com/v1/search?q=${Uri.encode(query)}&type=track&limit=1"
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $token")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) return null
+            val body = response.body?.string() ?: return null
+            val root = JSONObject(body)
+            val items = root.optJSONObject("tracks")?.optJSONArray("items") ?: return null
+            if (items.length() == 0) return null
+            return items.getJSONObject(0).optString("uri", null)
+        }
     }
 
     // Spotify SDK lifecycle, auth, stb.
@@ -402,6 +446,7 @@ class MainActivity : AppCompatActivity() {
             override fun onConnected(appRemote: SpotifyAppRemote) {
                 spotifyAppRemote = appRemote
             }
+
             override fun onFailure(throwable: Throwable) {
                 Log.e("MainActivity", throwable.message, throwable)
             }
@@ -417,9 +462,11 @@ class MainActivity : AppCompatActivity() {
                     accessToken = response.accessToken
                     Log.d("Auth", "Access token: ${response.accessToken}")
                 }
+
                 AuthorizationResponse.Type.ERROR -> {
                     Log.e("Auth", "Error: ${response.error}")
                 }
+
                 else -> {
                     Log.d("Auth", "Cancelled or unknown")
                 }
