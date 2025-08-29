@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bck">
+
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:src="@drawable/logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="48dp"
+        android:contentDescription="App logo"/>
+
+    <!-- Progress kör középen, nagy méretben -->
+    <com.example.compose.CircularProgressBar
+        android:id="@+id/progressCircle"
+        android:layout_width="315dp"
+        android:layout_height ="315dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layerType="software"/>
+
+    <!-- Play/Pause gomb progress kör közepén -->
+    <ImageButton
+        android:id="@+id/playPauseButton"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_pause"
+        app:tint="#FFFFFF"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/progressCircle"
+        app:layout_constraintBottom_toBottomOf="@id/progressCircle"
+        app:layout_constraintStart_toStartOf="@id/progressCircle"
+        app:layout_constraintEnd_toEndOf="@id/progressCircle"/>
+
+    <!-- QR ikon ugyanazon a helyen -->
+    <ImageButton
+        android:id="@+id/qrIcon"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:scaleType="fitCenter"
+        app:tint="#FFFFFF"
+        android:background="@android:color/transparent"
+        android:src="@drawable/qr"
+        android:contentDescription="Scan QR"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@id/progressCircle"
+        app:layout_constraintBottom_toBottomOf="@id/progressCircle"
+        app:layout_constraintStart_toStartOf="@id/progressCircle"
+        app:layout_constraintEnd_toEndOf="@id/progressCircle"/>
+
+    <!-- Cancel (X) gomb jobb felső sarokban -->
+    <ImageButton
+        android:id="@+id/cancelButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/cancelbutton"
+        android:contentDescription="Close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- PreviewView: középen, fix méretben -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="@drawable/camera_circle_mask"
+        android:clipToOutline="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- QR eredmény szöveg, progress kör alatt -->
+    <TextView
+        android:id="@+id/qrResultText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/progressCircle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

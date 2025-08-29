@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#00000000" /> <!-- átlátszó háttér -->
+    <corners android:radius="150dp" /> <!-- a fele a szélességnek/magasságnak -->
+</shape>

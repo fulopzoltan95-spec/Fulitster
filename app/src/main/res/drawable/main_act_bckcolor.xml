@@ -1,0 +1,36 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fő kék-lila gradient háttér -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#5ddafe"
+                android:endColor="#916de5"/>
+        </shape>
+    </item>
+    <!-- Közepes bokeh kör bal felső sarokban -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#30FFFFFF" />
+        </shape>
+        <size android:width="160dp" android:height="160dp"/>
+        <translate android:x="40dp" android:y="60dp"/>
+    </item>
+    <!-- Kisebb bokeh kör középtájra -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#18FFFFFF" />
+        </shape>
+        <size android:width="100dp" android:height="100dp"/>
+        <translate android:x="210dp" android:y="350dp"/>
+    </item>
+    <!-- Kisebb bokeh kör jobb alsó sarokban -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#18FFFFFF" />
+        </shape>
+        <size android:width="120dp" android:height="120dp"/>
+        <translate android:x="250dp" android:y="700dp"/>
+    </item>
+</layer-list>
