@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ForceMaterial3DialogWrapper" parent="Theme.Material3.DayNight.NoActionBar"/>
+
+    <style name="ShapeAppearanceOverlay.App.Dialog.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <!-- Classic -->
+    <style name="DialogTheme.Classic" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">#CC6200EE</item> <!-- áttetsző lila háttér -->
+        <item name="colorOnSurface">@android:color/white</item> <!-- fehér szöveg -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Dialog.Rounded</item>
+    </style>
+
+    <!-- Party -->
+    <style name="DialogTheme.Party" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">#CCFF3EF6</item> <!-- áttetsző rózsaszín -->
+        <item name="colorOnSurface">@android:color/black</item> <!-- fekete szöveg -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Dialog.Rounded</item>
+    </style>
+
+    <!-- Dark -->
+    <style name="DialogTheme.Dark" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">#CC121212</item> <!-- áttetsző sötétszürke -->
+        <item name="colorOnSurface">@android:color/white</item> <!-- fehér szöveg -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Dialog.Rounded</item>
+    </style>
+</resources>

@@ -8,8 +8,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
+import android.view.Gravity
 import android.view.View
 import android.view.animation.LinearInterpolator
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
@@ -22,6 +25,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.app.theme.ThemeManager
+import com.example.app.theme.ThemeOption
+import com.example.app.theme.ThemeStore
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import com.spotify.android.appremote.api.ConnectionParams
@@ -34,7 +41,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import com.example.myapplicationasd.databinding.ActivityMainBinding
-
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 enum class PlayerState { STOPPED, PLAYING, PAUSED, FINISHED }
 
@@ -59,14 +68,25 @@ class MainActivity : AppCompatActivity() {
         private const val clientId = "da0095c04df945a2874dd9e91bc80fc9"
         private const val redirectUri = "hitsterclone://callback"
     }
-
+    private lateinit var themeStore: ThemeStore
+    private var currentTheme: ThemeOption = ThemeOption.Classic
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         showOnlyQrIcon()
+        themeStore = ThemeStore(this)
 
+        lifecycleScope.launch {
+            currentTheme = themeStore.themeFlow.first()
+            ThemeManager.currentTheme = currentTheme
+            ThemeManager.applyTheme(this@MainActivity, currentTheme)
+        }
+
+        binding.btnTheme.setOnClickListener {
+            showThemePicker()
+        }
         binding.qrIcon.setOnClickListener {
             checkCameraPermissionAndStart()
         }
@@ -472,6 +492,37 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+
+    private fun showThemePicker() {
+        val options = ThemeOption.entries.toTypedArray()
+        val labels = options.map { it.name }.toTypedArray()
+
+        val materialCtx = ContextThemeWrapper(this, R.style.ForceMaterial3DialogWrapper)
+
+        val titleView = TextView(materialCtx).apply {
+            text = "Válassz témát"
+            textSize = 20f
+            gravity = Gravity.CENTER
+            setPadding(0, 32, 0, 32)
+            // Színt nem kell itt erőltetni, mert a stílusból jön a colorOnSurface!
+        }
+
+        MaterialAlertDialogBuilder(materialCtx, currentTheme.dialogTheme)
+            .setCustomTitle(titleView)
+            .setItems(labels) { d, which ->
+                val chosen = options[which]
+                lifecycleScope.launch {
+                    themeStore.setTheme(chosen)
+                    currentTheme = chosen
+                    ThemeManager.currentTheme = currentTheme
+                    ThemeManager.applyTheme(this@MainActivity, chosen)
+                }
+                d.dismiss()
+            }
+            .show()
+
     }
 
     override fun onPause() {
