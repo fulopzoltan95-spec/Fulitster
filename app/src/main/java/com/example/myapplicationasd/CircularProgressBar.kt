@@ -5,6 +5,13 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.lifecycle.lifecycleScope
+import com.example.app.theme.ThemeManager
+import com.example.app.theme.ThemeOption
+import com.example.app.theme.ThemeStore
+import com.example.myapplicationasd.R
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class CircularProgressBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -18,8 +25,9 @@ class CircularProgressBar @JvmOverloads constructor(
 
     private var glowRadius = 38f
 
+
     private val neonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#D0529C")    // #FF3EF6
+        color = Color.parseColor(ThemeManager.currentTheme.progressbarColor)    // "#D0529C"
         style = Paint.Style.STROKE
         strokeWidth = 24f
         setShadowLayer(glowRadius, 0f, 0f, Color.parseColor("#BBFF3EF6"))
@@ -36,8 +44,25 @@ class CircularProgressBar @JvmOverloads constructor(
         setLayerType(LAYER_TYPE_SOFTWARE, neonPaint)
         startGlowPulse()
     }
+    fun updateColors() {
+        val hex = ThemeManager.currentTheme.progressbarColor
+        val colorInt = Color.parseColor(hex)
+
+        neonPaint.color = colorInt
+        neonPaint.setShadowLayer(glowRadius, 0f, 0f, adjustAlpha(colorInt, 0.7f))
+        invalidate()
+    }
+
+    private fun adjustAlpha(color: Int, factor: Float): Int {
+        val alpha = (Color.alpha(color) * factor).toInt()
+        val red = Color.red(color)
+        val green = Color.green(color)
+        val blue = Color.blue(color)
+        return Color.argb(alpha, red, green, blue)
+    }
 
     override fun onDraw(canvas: Canvas) {
+        updateColors()
         super.onDraw(canvas)
         val size = width.coerceAtMost(height).toFloat()
         val centerX = width / 2f
