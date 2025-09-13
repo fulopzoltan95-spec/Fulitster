@@ -506,7 +506,6 @@ class MainActivity : AppCompatActivity() {
             textSize = 20f
             gravity = Gravity.CENTER
             setPadding(0, 32, 0, 32)
-            // Színt nem kell itt erőltetni, mert a stílusból jön a colorOnSurface!
         }
 
         MaterialAlertDialogBuilder(materialCtx, currentTheme.dialogTheme)
