@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0c1021" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <title>Hitster PWA</title>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <img src="icons/icon-192.svg" alt="Hitster" class="brand__logo" />
+      <div>
+        <h1>Hitster PWA</h1>
+        <p class="subtitle">QR alapú Spotify lejátszó webre</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="installButton" class="ghost">📲 Telepítés</button>
+      <select id="themePicker" aria-label="Téma választása">
+        <option value="classic">Classic</option>
+        <option value="dark">Dark</option>
+        <option value="neon">Neon</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card">
+      <div class="card__header">
+        <div>
+          <h2>Zenevezérlés</h2>
+          <p>Ugyanaz a flow, mint az androidos appban: QR → keresés → lejátszás.</p>
+        </div>
+        <button id="resetButton" class="ghost">🔄 Reset</button>
+      </div>
+
+      <div class="player">
+        <div class="progress" role="progressbar" aria-label="Lejátszás" aria-valuemin="0" aria-valuemax="100">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" class="progress__track" />
+            <circle cx="60" cy="60" r="54" class="progress__bar" />
+          </svg>
+          <button id="playPause" class="fab" aria-label="Lejátszás indítása">
+            ▶️
+          </button>
+        </div>
+        <div class="player__details">
+          <p class="label">Aktuális dal</p>
+          <h3 id="trackTitle">Várakozás…</h3>
+          <p id="trackArtist" class="muted">Szkenneld be a kártyát vagy Spotify linket!</p>
+          <div class="chips">
+            <span id="statusChip" class="chip">Állj</span>
+            <span id="durationChip" class="chip chip--muted">0:00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__header">
+        <div>
+          <h2>QR / Link bemenet</h2>
+          <p>Hitster kártya, Spotify URI vagy URL.</p>
+        </div>
+        <div class="inline-actions">
+          <button id="startScan" class="ghost">📷 Kamera</button>
+          <button id="stopScan" class="ghost" disabled>✖️ Leállít</button>
+        </div>
+      </div>
+
+      <div class="scanner">
+        <video id="cameraFeed" playsinline muted></video>
+        <canvas id="cameraCanvas" aria-hidden="true"></canvas>
+        <p id="scanHint">Engedélyezd a kamerát, vagy illeszd be a QR tartalmat.</p>
+        <textarea id="manualInput" rows="2" placeholder="QR érték / Spotify link"></textarea>
+        <button id="handleManual" class="primary">Indítás</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__header">
+        <div>
+          <h2>Spotify hozzáférés</h2>
+          <p>Használd a Web API tokenedet (Implicit vagy PKCE flow). Tároljuk lokálisan.</p>
+        </div>
+        <button id="clearToken" class="ghost">🧹 Törlés</button>
+      </div>
+      <div class="form-control">
+        <label for="tokenInput">Access token</label>
+        <input id="tokenInput" type="password" autocomplete="off" placeholder="Bearer token" />
+        <small>Jogosultság: <code>app-remote-control streaming user-read-playback-state</code> vagy előnézethez elég a <code>streaming</code>.</small>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>
