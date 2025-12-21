@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title desc">
+  <title id="title">Hitster Icon</title>
+  <desc id="desc">Stylized vinyl record with play button for Hitster PWA</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#5b8dff" />
+      <stop offset="100%" stop-color="#a259ff" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="32" fill="url(#bg)" />
+  <circle cx="96" cy="96" r="60" fill="#0c1021" opacity="0.9" />
+  <circle cx="96" cy="96" r="18" fill="#f6f7fb" opacity="0.95" />
+  <circle cx="96" cy="96" r="8" fill="#0c1021" />
+  <path d="M96 74c12 0 22 10 22 22s-10 22-22 22-22-10-22-22 10-22 22-22Zm-8 12v20l16-10-16-10Z" fill="#f6f7fb"/>
+</svg>
