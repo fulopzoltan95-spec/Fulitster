@@ -291,24 +291,43 @@ async function scanLoop() {
 }
 
 function registerSw() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js');
-  }
+  if (!('serviceWorker' in navigator)) return;
+
+  const base = window.location.pathname.replace(/[^/]+$/, '');
+  const swPath = `${base}service-worker.js`;
+  navigator.serviceWorker.register(swPath).catch((err) => {
+    console.error('SW reg failed', err);
+    toast('A szolgáltatásmunkás nem regisztrálható.');
+  });
 }
 
 function setupInstallPrompt() {
+  els.installButton.disabled = true;
+
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     state.installEvent = e;
     els.installButton.style.display = 'inline-flex';
+    els.installButton.disabled = false;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    state.installEvent = null;
+    els.installButton.disabled = true;
+    els.installButton.style.display = 'none';
+    toast('Telepítve a kezdőképernyőre!');
   });
 
   els.installButton.addEventListener('click', async () => {
-    if (!state.installEvent) return;
+    if (!state.installEvent) {
+      toast('A telepítés nem elérhető ezen az eszközön/böngészőben.');
+      return;
+    }
     state.installEvent.prompt();
     const { outcome } = await state.installEvent.userChoice;
     toast(outcome === 'accepted' ? 'Telepítve a kezdőképernyőre!' : 'Telepítés megszakítva');
     state.installEvent = null;
+    els.installButton.disabled = true;
   });
 }
 
