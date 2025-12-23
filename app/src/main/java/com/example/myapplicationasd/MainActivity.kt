@@ -171,6 +171,13 @@ class MainActivity : AppCompatActivity() {
                     startProgressAnimation(track.duration, mySession)
                 }
             }
+        } ?: run {
+            launchSpotifyApp(uri)
+            Toast.makeText(
+                this,
+                "Spotify nem indult el, próbáljuk meg megnyitni az alkalmazást…",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -457,6 +464,16 @@ class MainActivity : AppCompatActivity() {
         )
             .setScopes(arrayOf("app-remote-control", "streaming"))
             .build()
+        if (!isSpotifyInstalled()) {
+            Toast.makeText(
+                this,
+                "A Spotify nincs telepítve vagy nem elérhető. Megnyitjuk az áruházat…",
+                Toast.LENGTH_LONG
+            ).show()
+            promptInstallSpotify()
+            return
+        }
+
         AuthorizationClient.openLoginActivity(this, 1337, request)
         val connectionParams = ConnectionParams.Builder(clientId)
             .setRedirectUri(redirectUri)
@@ -469,6 +486,12 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFailure(throwable: Throwable) {
                 Log.e("MainActivity", throwable.message, throwable)
+                Toast.makeText(
+                    this@MainActivity,
+                    "Nem sikerült csatlakozni a Spotify-hoz. Nyissuk meg az alkalmazást!",
+                    Toast.LENGTH_LONG
+                ).show()
+                launchSpotifyApp()
             }
         })
     }
@@ -537,5 +560,46 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         spotifyAppRemote?.let { SpotifyAppRemote.disconnect(it) }
+    }
+
+    private fun isSpotifyInstalled(): Boolean {
+        return try {
+            packageManager.getPackageInfo("com.spotify.music", 0)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun promptInstallSpotify() {
+        try {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=com.spotify.music")
+                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        } catch (e: Exception) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music")
+                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
+    }
+
+    private fun launchSpotifyApp(uri: String? = null) {
+        val intentUri = uri ?: "spotify:"
+        val launchIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(intentUri)
+            `package` = "com.spotify.music"
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        try {
+            startActivity(launchIntent)
+        } catch (e: Exception) {
+            promptInstallSpotify()
+        }
     }
 }

@@ -30,20 +30,22 @@
     <!-- Progress kör középen, nagy méretben -->
     <com.example.compose.CircularProgressBar
         android:id="@+id/progressCircle"
-        android:layout_width="315dp"
-        android:layout_height ="315dp"
+        android:layout_width="0dp"
+        android:layout_height ="0dp"
         android:visibility="invisible"
+        android:layerType="software"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layerType="software"/>
+        app:layout_constraintWidth_percent="0.75"
+        app:layout_constraintDimensionRatio="1:1"/>
 
     <!-- Play/Pause gomb progress kör közepén -->
     <ImageButton
         android:id="@+id/playPauseButton"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@android:color/transparent"
         android:scaleType="centerInside"
         android:src="@drawable/ic_pause"
@@ -52,13 +54,15 @@
         app:layout_constraintTop_toTopOf="@id/progressCircle"
         app:layout_constraintBottom_toBottomOf="@id/progressCircle"
         app:layout_constraintStart_toStartOf="@id/progressCircle"
-        app:layout_constraintEnd_toEndOf="@id/progressCircle"/>
+        app:layout_constraintEnd_toEndOf="@id/progressCircle"
+        app:layout_constraintWidth_percent="0.45"
+        app:layout_constraintDimensionRatio="1:1"/>
 
     <!-- QR ikon ugyanazon a helyen -->
     <ImageButton
         android:id="@+id/qrIcon"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scaleType="fitCenter"
         app:tint="#FFFFFF"
         android:background="@android:color/transparent"
@@ -68,7 +72,9 @@
         app:layout_constraintTop_toTopOf="@id/progressCircle"
         app:layout_constraintBottom_toBottomOf="@id/progressCircle"
         app:layout_constraintStart_toStartOf="@id/progressCircle"
-        app:layout_constraintEnd_toEndOf="@id/progressCircle"/>
+        app:layout_constraintEnd_toEndOf="@id/progressCircle"
+        app:layout_constraintWidth_percent="0.55"
+        app:layout_constraintDimensionRatio="1:1"/>
 
     <!-- Cancel (X) gomb jobb felső sarokban -->
     <ImageButton
@@ -86,15 +92,17 @@
     <!-- PreviewView: középen, fix méretben -->
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/camera_circle_mask"
         android:clipToOutline="true"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintDimensionRatio="1:1"/>
 
     <!-- QR eredmény szöveg, progress kör alatt -->
     <TextView
