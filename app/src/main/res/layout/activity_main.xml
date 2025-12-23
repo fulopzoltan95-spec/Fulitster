@@ -97,6 +97,7 @@
         android:background="@drawable/camera_circle_mask"
         android:clipToOutline="true"
         android:visibility="gone"
+        app:implementationMode="compatible"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
